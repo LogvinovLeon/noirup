@@ -9,6 +9,9 @@ inputs:
     description: Noir version to install. Defaults to the latest stable version.
     default: stable
     required: false
+  commit:
+    description: Specific commit hash to install. Overrides the 'toolchain' input if provided.
+    required: false
 
 runs:
   using: composite
@@ -22,7 +25,9 @@ runs:
       id: parse
       run: |
         : parse toolchain version
-        if [[ $toolchain == "stable" ]]; then
+        if [ -n "${{ inputs.commit }}" ]; then
+          echo "toolchain="--commit ${{ inputs.commit }}"" >> $GITHUB_OUTPUT
+        elif [[ $toolchain == "stable" ]]; then
           : By default, noirup installs the latest stable version
         elif [[ $toolchain == "nightly" ]]; then
           echo "toolchain="--nightly"" >> $GITHUB_OUTPUT
